@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="search_by_popularity">Popularity</string>
+    <string name="search_by_top_rated">Top Rated</string>
+    <string name="search_by">Search By</string>
+    <string name="error_message">Failed to get results, please try again</string>
+</resources>
