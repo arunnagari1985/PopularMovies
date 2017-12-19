@@ -3,7 +3,6 @@ package com.example.android.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.popularmovies.Utilities.JsonUtils;
 import com.example.android.popularmovies.Utilities.NetworkUtils;
@@ -119,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
             URL sortedUrl = NetworkUtils.buildUrl(params[0]);
 
-            Log.v(TAG,"Obtained Url is " + sortedUrl.toString());
             try
             {
               String jsonMovieData = NetworkUtils.getResponseFromHttpUrl(sortedUrl);
@@ -197,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         Context context = this;
 
         //Destination Activity to be launched
-        Class destinationContext = childActivity.class;
+        Class destinationContext = ChildActivity.class;
 
         Intent intent = new Intent(this, destinationContext);
 
@@ -205,6 +202,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         String movieTitle = mMovieAdapter.getMovieDetails(itemClickedIndex).getmMovieTitle();
         String moviePoster = mMovieAdapter.getMovieDetails(itemClickedIndex).getmMoviePosterUrl();
         String movieOverView = mMovieAdapter.getMovieDetails(itemClickedIndex).getmMovieOverview();
+
+
 
         //Create an array list to store movie information
         ArrayList<String> movieInfo = new ArrayList<String>();
