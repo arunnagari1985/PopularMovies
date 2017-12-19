@@ -12,11 +12,12 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
-public class childActivity extends AppCompatActivity {
+public class ChildActivity extends AppCompatActivity {
 
     private TextView mMovieTitle;
     private TextView mMovieOverView;
     private ImageView mMovieImage;
+    private TextView test;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
