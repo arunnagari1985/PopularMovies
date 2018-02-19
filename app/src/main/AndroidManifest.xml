@@ -18,7 +18,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChildActivity"></activity>
+        <activity android:name=".ChildActivity"
+            android:label="Movie">
+
+        </activity>
+
+        <provider
+            android:name="com.example.android.popularmovies.data.MovieContentProvider"
+            android:authorities="com.example.android.popularmovies"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
