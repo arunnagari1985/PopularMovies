@@ -27,7 +27,7 @@ public class NetworkUtils {
 
     final static String sortByPopularity = "popular";
     final static String sortByTopRated = "top_rated";
-    final static String API_KEY = "?api_key=845d8e429f3a3b9b3ca29de84d55cbb1";
+    final static String API_KEY = "?api_key=ADD_YOUR_KEY";
 
     /**
      * Builds the URL used to query MovieDB.
