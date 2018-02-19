@@ -2,7 +2,11 @@ package com.example.android.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,17 +20,20 @@ import android.widget.TextView;
 
 import com.example.android.popularmovies.Utilities.JsonUtils;
 import com.example.android.popularmovies.Utilities.NetworkUtils;
+import com.example.android.popularmovies.data.MovieDbContract;
 
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener{
+public class MainActivity extends AppCompatActivity implements MovieAdapter.ListItemClickListener, LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = "MainActivity";
 
     private final int SORT_BY_POPULARITY = 1;
 
     private final int SORT_BY_TOP_RATING = 2;
+
+    private static final int MOVIE_LOADER_ID = 0;
 
     private MovieAdapter mMovieAdapter;
 
@@ -181,6 +188,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
             case R.id.search_by_top :
                 loadData(SORT_BY_TOP_RATING);
                 break;
+            case R.id.search_by_favorite :
+                getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
+                break;
             default:
         };
 
@@ -214,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         //Create a bundle object to package array list
         Bundle movieBundle = new Bundle();
         movieBundle.putStringArrayList("MOVIE_ARRAY_LIST",movieInfo);
+        movieBundle.putInt("MOVIE_ID",mMovieAdapter.getMovieDetails(itemClickedIndex).getmMovieID());
 
         //Put data in intent
         intent.putExtras(movieBundle);
@@ -222,4 +233,93 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         startActivity(intent);
 
     }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, final Bundle loaderArgs) {
+
+        return new AsyncTaskLoader<Cursor>(this) {
+
+            // Initialize a Cursor, this will hold all the task data
+            Cursor mMovieData = null;
+
+            // onStartLoading() is called when a loader first starts loading data
+            @Override
+            protected void onStartLoading() {
+                if (mMovieData != null) {
+                    // Delivers any previously loaded data immediately
+                    deliverResult(mMovieData);
+                } else {
+                    // Force a new load
+                    forceLoad();
+                }
+            }
+
+            // loadInBackground() performs asynchronous loading of data
+            @Override
+            public Cursor loadInBackground() {
+
+                //Query all task data in the background
+
+                try {
+                    return getContentResolver().query(MovieDbContract.MovieEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            null);
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to asynchronously load data.");
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            // deliverResult sends the result of the load, a Cursor, to the registered listener
+            public void deliverResult(Cursor data) {
+                mMovieData = data;
+                super.deliverResult(data);
+            }
+        };
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        // Update the data that the adapter uses to create ViewHolders
+        int dataId = 0;
+        int movieIDIndex = 0;
+        int movieTitleIndex = 0;
+        int moviePosterIndex = 0;
+        int movieOverviewIndex = 0;
+
+        ArrayList<MovieDetails> movieList = new ArrayList<MovieDetails>();
+
+
+            data.moveToFirst();
+
+            while (data.moveToNext()) {
+                dataId = data.getColumnIndex(MovieDbContract.MovieEntry._ID);
+                movieTitleIndex = data.getColumnIndex(MovieDbContract.MovieEntry.COLUMN_MOVIE_TITLE);
+                movieIDIndex = data.getColumnIndex(MovieDbContract.MovieEntry.COLUMN_MOVIE_ID);
+                moviePosterIndex = data.getColumnIndex(MovieDbContract.MovieEntry.COLUMN_MOVIE_POSTER_URL);
+                movieOverviewIndex = data.getColumnIndex(MovieDbContract.MovieEntry.COLUMN_MOVIE_OVERVIEW);
+
+                MovieDetails movieD = new MovieDetails();
+                movieD.setmMoviePosterUrl(data.getString(moviePosterIndex));
+                movieD.setmMovieTitle(data.getString(movieTitleIndex));
+                movieD.setmMovieOverview(data.getString(movieOverviewIndex));
+                movieD.setmMovieID(data.getInt(movieIDIndex));
+                movieList.add(movieD);
+            }
+
+            mMovieAdapter.setAdapterData(movieList);
+            mRecyclerView.setAdapter(mMovieAdapter);
+
+    }
+
+
+    public void onLoaderReset(Loader<Cursor> loader) {
+          //Do nothing
+    }
+
 }

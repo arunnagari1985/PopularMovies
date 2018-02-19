@@ -13,6 +13,7 @@ public class MovieDetails
 
     public MovieDetails()
     {
+        //Add Movie ID
         mMovieID = 0;
         mMoviePosterUrl = null;
         mMovieTitle = "";
@@ -58,3 +59,4 @@ public class MovieDetails
         return mMovieID;
     }
 }
+

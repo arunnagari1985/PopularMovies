@@ -4,4 +4,7 @@
     <string name="search_by_top_rated">Top Rated</string>
     <string name="search_by">Search By</string>
     <string name="error_message">Failed to get results, please try again</string>
+    <string name="Review_Title">Reviews</string>
+    <string name="Trailer_Title">Trailers</string>
+    <string name="search_by_favorite">Favorite</string>
 </resources>

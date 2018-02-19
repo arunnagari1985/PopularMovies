@@ -27,7 +27,7 @@ public class NetworkUtils {
 
     final static String sortByPopularity = "popular";
     final static String sortByTopRated = "top_rated";
-    final static String API_KEY = "?api_key=ADD KEY";
+    final static String API_KEY = "?api_key=845d8e429f3a3b9b3ca29de84d55cbb1";
 
     /**
      * Builds the URL used to query MovieDB.
@@ -57,6 +57,46 @@ public class NetworkUtils {
         try {
             url = new URL(builtUri.toString());
         } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildReviewUrl(int movieId)
+    {
+        String movieURL = null;
+        movieURL = MOVIE_DB_BASE_URL + movieId + "/reviews" + API_KEY;
+
+        Uri builtUri = Uri.parse(movieURL).buildUpon().build();
+
+        URL url = null;
+
+        try {
+            url = new URL(builtUri.toString());
+        }
+        catch(MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildTrailerUrl(int movieId)
+    {
+        String movieURL = null;
+        movieURL = MOVIE_DB_BASE_URL + movieId + "/videos" + API_KEY;
+
+        Uri builtUri = Uri.parse(movieURL).buildUpon().build();
+
+        URL url = null;
+
+        try {
+            url = new URL(builtUri.toString());
+        }
+        catch(MalformedURLException e)
+        {
             e.printStackTrace();
         }
 
