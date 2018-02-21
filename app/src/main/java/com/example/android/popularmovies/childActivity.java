@@ -325,24 +325,31 @@ public class ChildActivity extends AppCompatActivity implements MovieTrailerAdap
     {
         int menuItemSelected = item.getItemId();
 
-        Log.v(TAG,"Query Passed: " + MovieDbContract.MovieEntry.CONTENT_URI_MOVIE.toString());
         //Based on Menu item selected load data again
         switch(menuItemSelected)
         {
 
 
             case R.id.action_favorite :
-                Cursor c = getContentResolver().query(MovieDbContract.MovieEntry.CONTENT_URI,
+                String[] array = {String.valueOf(mMovieID)};
+                Cursor c = getContentResolver().query(MovieDbContract.MovieEntry.buildMovieUri((long)mMovieID),
                         null,
-                        String.valueOf(mMovieID),
-                        null,
+                        MovieDbContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                        array,
                         null);
 
-
+                Log.v(TAG,"Number of entries received: " + String.valueOf(c.getCount()));
 
                 if(c.getCount() == 1)
-                 Toast.makeText(this, "Clicked favorite already exists", Toast.LENGTH_SHORT).show();
-                else
+                {
+                    int count = 0;
+                    //Toast.makeText(this, "Clicked favorite already exists", Toast.LENGTH_SHORT).show();
+                    count = getContentResolver().delete(MovieDbContract.MovieEntry.buildMovieUri((long) mMovieID),
+                            MovieDbContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                            array);
+                    Log.v(TAG,"NUmber of items deleted: " + String.valueOf(count));
+                }
+                    else
                  {
                     ContentValues contentValues = new ContentValues();
                     // Put the movie data into the ContentValues
