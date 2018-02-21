@@ -245,13 +245,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
             // onStartLoading() is called when a loader first starts loading data
             @Override
             protected void onStartLoading() {
-                if (mMovieData != null) {
-                    // Delivers any previously loaded data immediately
-                    deliverResult(mMovieData);
-                } else {
-                    // Force a new load
+                //forceLoad so that you can see the result immediately
                     forceLoad();
-                }
+
             }
 
             // loadInBackground() performs asynchronous loading of data
