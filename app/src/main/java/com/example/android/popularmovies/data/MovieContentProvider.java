@@ -122,14 +122,12 @@ public class MovieContentProvider extends ContentProvider {
             case MOVIE_WITH_ID:
 
                 // Selection is the _ID column = ?, and the Selection args = the row ID from the URI
-                String mSelection = "movie_id=?";
-                String[] mSelectionArgs = new String[]{selection};
 
                 // Construct a query as you would normally, passing in the selection/args
                 retCursor =  db.query(TABLE_NAME,
                         projection,
-                        mSelection,
-                        mSelectionArgs,
+                        selection,
+                        selectionArgs,
                         null,
                         null,
                         sortOrder);
@@ -150,7 +148,30 @@ public class MovieContentProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
 
-        throw new UnsupportedOperationException("Not yet implemented");
+        final SQLiteDatabase db = mMovieDbHelper.getWritableDatabase();
+
+        int match = sUriMatcher.match(uri);
+        // Keep track of the number of deleted tasks
+        int tasksDeleted; // starts as 0
+
+        switch (match) {
+            // Handle the single item case, recognized by the ID included in the URI path
+            case MOVIE_WITH_ID:
+                // Use selections/selectionArgs to filter for this ID
+                tasksDeleted = db.delete(TABLE_NAME, selection, new String[]{selectionArgs[0]});
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        //Notify the resolver of a change, return the number of items deleted
+        if (tasksDeleted != 0) {
+            // Task deleted, set notification
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        // Return the number of tasks deleted
+        return tasksDeleted;
     }
 
 
