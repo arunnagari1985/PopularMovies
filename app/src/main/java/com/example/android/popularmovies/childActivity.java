@@ -42,6 +42,9 @@ public class ChildActivity extends AppCompatActivity implements MovieTrailerAdap
 
     private TextView mMovieTitle;
     private TextView mMovieOverView;
+    private TextView mMovieReleaseDate;
+    private TextView mMovieRating;
+
     private ImageView mMovieImage;
 
     private MovieReviewAdapter mMovieReviewAdapter;
@@ -58,6 +61,9 @@ public class ChildActivity extends AppCompatActivity implements MovieTrailerAdap
     private String mMovie_Title;
     private String mMovie_Overview;
     private String mMovie_PosterUrl;
+    private String mMovie_Rating;
+    private String mMovie_ReleaseDate;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -68,6 +74,8 @@ public class ChildActivity extends AppCompatActivity implements MovieTrailerAdap
         mMovieTitle = (TextView) findViewById(R.id.movie_name);
         mMovieOverView = (TextView) findViewById(R.id.movie_overview);
         mMovieImage = (ImageView) findViewById(R.id.movie_Image);
+        mMovieRating = (TextView) findViewById(R.id.movie_rating);
+        mMovieReleaseDate = (TextView) findViewById(R.id.movie_release_date);
         mRecyclerViewReviews = (RecyclerView) findViewById(R.id.movies_reviews);
         mReviewTitle = (TextView) findViewById(R.id.tv_reviews_title);
         mRecyclerViewTrailers = (RecyclerView) findViewById(R.id.movies_trailers);
@@ -97,6 +105,15 @@ public class ChildActivity extends AppCompatActivity implements MovieTrailerAdap
             mMovie_Overview = movieData.get(2);
             //Set movie overview
             mMovieOverView.setText("Movie Overview: \n" + mMovie_Overview);
+
+            mMovie_Rating = movieData.get(3);
+            //Set movie rating
+            mMovieRating.setText("Rating: " + mMovie_Rating);
+
+            mMovie_ReleaseDate = movieData.get(4);
+            //Set movie Release date
+            mMovieReleaseDate.setText("Release Date: " + mMovie_ReleaseDate);
+
         }
 
         if(data.containsKey("MOVIE_ID"))
@@ -108,6 +125,8 @@ public class ChildActivity extends AppCompatActivity implements MovieTrailerAdap
         loadReviewData();
 
     }
+
+
 
     private void loadReviewData()
     {

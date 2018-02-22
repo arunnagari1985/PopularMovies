@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -16,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.Utilities.JsonUtils;
@@ -43,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private TextView mErrorMessageDisplay;
 
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private Parcelable mListState;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,13 +60,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
 
+
         //Initialize the view
         initializeView();
 
         //Load movie data sorted by Popularity
         loadData(SORT_BY_POPULARITY);
 
+        if(savedInstanceState != null){
+            // scroll to existing position which exist before rotation.
 
+            mListState = savedInstanceState.getParcelable("position");
+            Log.v(TAG,"Reached savedInstance State " + mListState.toString());
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
+        }
     }
     /**
      * This method will make the View for the weather data visible and
@@ -96,13 +110,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     {
         mLoadingIndicator.setVisibility(View.VISIBLE);
         mRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),2);
-        mRecyclerView.setLayoutManager(layoutManager);
+        mLayoutManager = new GridLayoutManager(getApplicationContext(),2);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mMovieAdapter = new MovieAdapter(this, this);
         mRecyclerView.setAdapter(mMovieAdapter);
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+
+        Log.v(TAG,"Reached savedInstance State 1");
+        // Save list state
+        mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        state.putParcelable("position", mListState);
+    }
 
 
     public class FetchMovieDataTask extends AsyncTask<Integer, Void, MovieDetails[]>
@@ -212,7 +235,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         String movieTitle = mMovieAdapter.getMovieDetails(itemClickedIndex).getmMovieTitle();
         String moviePoster = mMovieAdapter.getMovieDetails(itemClickedIndex).getmMoviePosterUrl();
         String movieOverView = mMovieAdapter.getMovieDetails(itemClickedIndex).getmMovieOverview();
-
+        String movieRating = mMovieAdapter.getMovieDetails(itemClickedIndex).getMovieRating();
+        String movieReleaseDate = mMovieAdapter.getMovieDetails(itemClickedIndex).getMovieReleaseDate();
 
 
         //Create an array list to store movie information
@@ -220,6 +244,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         movieInfo.add(movieTitle);
         movieInfo.add(moviePoster);
         movieInfo.add(movieOverView);
+        movieInfo.add(movieRating);
+        movieInfo.add(movieReleaseDate);
 
         //Create a bundle object to package array list
         Bundle movieBundle = new Bundle();

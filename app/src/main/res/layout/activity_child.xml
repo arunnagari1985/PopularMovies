@@ -27,6 +27,17 @@
         android:id="@+id/movie_overview"
         tools:text="This is default overview"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/movie_release_date"
+            tools:text="This is default release date"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/movie_rating"
+            tools:text="This is default rating"/>
 
     <TextView
         android:id="@+id/tv_error_message"

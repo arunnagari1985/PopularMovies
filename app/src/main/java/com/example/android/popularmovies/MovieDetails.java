@@ -10,6 +10,8 @@ public class MovieDetails
     private String mMovieOverview;
     private int mMovieID;
     private String mMoviePosterUrl;
+    private String mMovieRating;
+    private String mMovieReleaseDate;
 
     public MovieDetails()
     {
@@ -18,6 +20,8 @@ public class MovieDetails
         mMoviePosterUrl = null;
         mMovieTitle = "";
         mMovieOverview = "";
+        mMovieReleaseDate = "";
+        mMovieRating = "";
     }
 
     public void setmMoviePosterUrl(String imgUrl)
@@ -57,6 +61,26 @@ public class MovieDetails
     public int getmMovieID()
     {
         return mMovieID;
+    }
+
+    public String getMovieRating()
+    {
+        return mMovieRating;
+    }
+
+    public void setMovieRating(String rating)
+    {
+        mMovieRating = rating;
+    }
+
+    public String getMovieReleaseDate()
+    {
+        return mMovieReleaseDate;
+    }
+
+    public void setMovieReleaseDate(String date)
+    {
+      mMovieReleaseDate = date;
     }
 }
 

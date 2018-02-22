@@ -44,6 +44,8 @@ public final class JsonUtils {
             MovieDetails movieD = new MovieDetails();
             movieD.setmMoviePosterUrl("http://image.tmdb.org/t/p/w185/" + temp.getString("poster_path"));
             movieD.setmMovieTitle(temp.getString("title"));
+            movieD.setMovieReleaseDate(temp.getString("release_date"));
+            movieD.setMovieRating(String.valueOf(temp.getDouble("vote_average")));
             movieD.setmMovieOverview(temp.getString("overview"));
             movieD.setmMovieID(temp.getInt("id"));
             parsedMovieDBData[i] = movieD;
