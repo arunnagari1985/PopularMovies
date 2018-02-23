@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private final int SORT_BY_TOP_RATING = 2;
 
+    private final int SORT_BY_FAVORITE = 3;
+
     private static final int MOVIE_LOADER_ID = 0;
 
     private MovieAdapter mMovieAdapter;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
     private Parcelable mListState;
 
+    private int mSortBy = SORT_BY_POPULARITY;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,20 +64,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
 
-
+        mListState = null;
         //Initialize the view
         initializeView();
 
-        //Load movie data sorted by Popularity
-        loadData(SORT_BY_POPULARITY);
-
         if(savedInstanceState != null){
-            // scroll to existing position which exist before rotation.
-
             mListState = savedInstanceState.getParcelable("position");
-            Log.v(TAG,"Reached savedInstance State " + mListState.toString());
+            mSortBy = savedInstanceState.getInt("sort");
             mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
         }
+
+        //Load movie data sorted by Popularity
+        loadData(mSortBy);
+
+
     }
     /**
      * This method will make the View for the weather data visible and
@@ -103,7 +107,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     //Start background Async task
     private void loadData(int data)
     {
-        new FetchMovieDataTask().execute(data);
+        switch(data)
+        {
+            case SORT_BY_POPULARITY:
+                new FetchMovieDataTask().execute(data);
+                break;
+            case SORT_BY_TOP_RATING:
+                new FetchMovieDataTask().execute(data);
+                break;
+            case SORT_BY_FAVORITE:
+                getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
+                break;
+            default:
+                //Do nothing
+
+        }
+
     }
 
     private void initializeView()
@@ -120,11 +139,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     @Override
     protected void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-
-        Log.v(TAG,"Reached savedInstance State 1");
         // Save list state
         mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
         state.putParcelable("position", mListState);
+        state.putInt("sort",mSortBy);
     }
 
 
@@ -179,6 +197,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
                 mMovieAdapter.setAdapterData(movieList);
                 mRecyclerView.setAdapter(mMovieAdapter);
+
+                if(mListState != null)
+                 mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
             }
             else
             {
@@ -202,22 +223,23 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
     {
         int menuItemSelected = item.getItemId();
 
+
         //Based on Menu item selected load data again
         switch(menuItemSelected)
         {
             case R.id.search_by_pop :
-                loadData(SORT_BY_POPULARITY);
+                mSortBy = SORT_BY_POPULARITY;
                 break;
             case R.id.search_by_top :
-                loadData(SORT_BY_TOP_RATING);
+                mSortBy = SORT_BY_TOP_RATING;
                 break;
             case R.id.search_by_favorite :
-                getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
+                mSortBy = SORT_BY_FAVORITE;
                 break;
             default:
         };
 
-
+        loadData(mSortBy);
         return super.onOptionsItemSelected(item);
     }
 
@@ -336,6 +358,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.List
 
             mMovieAdapter.setAdapterData(movieList);
             mRecyclerView.setAdapter(mMovieAdapter);
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+
+           if(mListState != null)
+             mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
 
     }
 
